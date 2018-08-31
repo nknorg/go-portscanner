@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
+	"math"
 	"net/http"
 	"time"
 )
@@ -93,6 +95,9 @@ func CheckTCP(ip string, port uint16) (isOpen bool, err error) {
 		if err == nil {
 			return isOpen, nil
 		}
+		delay := math.Pow(2, float64(retry))
+		log.Printf("Retry after %f seconds", delay)
+		time.Sleep(time.Duration(delay) * time.Second)
 	}
 	return
 }
