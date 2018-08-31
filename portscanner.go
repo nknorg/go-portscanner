@@ -9,7 +9,8 @@ import (
 	"time"
 )
 
-var waitForResult = 1 * time.Second
+const waitForResult = 1 * time.Second
+const retries = 3
 
 type response struct {
 	RequestID string `json:"request_id"`
@@ -85,7 +86,13 @@ func checkPort(url string) (bool, error) {
 	return checkResult(resultURL)
 }
 
-func CheckTCP(ip string, port uint16) (bool, error) {
+func CheckTCP(ip string, port uint16) (isOpen bool, err error) {
 	url := fmt.Sprintf("https://check-host.net/check-tcp?host=%s:%d", ip, port)
-	return checkPort(url)
+	for retry := 0; retry < retries; retry++ {
+		isOpen, err = checkPort(url)
+		if err == nil {
+			return isOpen, nil
+		}
+	}
+	return
 }
