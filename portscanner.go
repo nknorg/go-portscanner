@@ -88,8 +88,7 @@ func checkPort(url string) (bool, error) {
 	return checkResult(resultURL)
 }
 
-func CheckTCP(ip string, port uint16) (isOpen bool, err error) {
-	url := fmt.Sprintf("https://check-host.net/check-tcp?host=%s:%d", ip, port)
+func checkWithRetry(url string) (isOpen bool, err error) {
 	for retry := 0; retry < retries; retry++ {
 		isOpen, err = checkPort(url)
 		if err == nil {
@@ -100,4 +99,14 @@ func CheckTCP(ip string, port uint16) (isOpen bool, err error) {
 		time.Sleep(time.Duration(delay) * time.Second)
 	}
 	return
+}
+
+func CheckTCP(ip string, port uint16) (isOpen bool, err error) {
+	url := fmt.Sprintf("https://check-host.net/check-tcp?host=%s:%d", ip, port)
+	return checkWithRetry(url)
+}
+
+func CheckUDP(ip string, port uint16) (isOpen bool, err error) {
+	url := fmt.Sprintf("https://check-host.net/check-udp?host=%s:%d", ip, port)
+	return checkWithRetry(url)
 }
