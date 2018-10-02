@@ -33,6 +33,7 @@ func getResponseBody(url string) ([]byte, error) {
 	}
 
 	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", "")
 
 	res, err := client.Do(req)
 	if err != nil {
